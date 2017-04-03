@@ -781,7 +781,12 @@ class Column(val expr: Expression) extends Logging {
   def isin(list: Any*): Column = withExpr { In(expr, list.map(lit(_).expr)) }
 
   /**
-   * SQL like expression.
+   * SQL LIKE expression. For regex string searches, see rlike.
+   * {{{
+   *   // find names that start with "Al"
+   *   scala> df.filter( $"name".like("Al%") ).collect()
+   *   Array([Alice,1])
+   * }}}
    *
    * @group expr_ops
    * @since 1.3.0
@@ -789,7 +794,12 @@ class Column(val expr: Expression) extends Logging {
   def like(literal: String): Column = withExpr { Like(expr, lit(literal).expr) }
 
   /**
-   * SQL RLIKE expression (LIKE with Regex).
+   * Return a Boolean column based on a regex match.
+   * {{{
+   *   // find names that end in "ice"
+   *   scala> df.filter( $"name".rlike("ice$") ).collect()
+   *   Array([Alice,1])
+   * }}}
    *
    * @group expr_ops
    * @since 1.3.0
@@ -856,7 +866,14 @@ class Column(val expr: Expression) extends Logging {
   def startsWith(other: Column): Column = withExpr { StartsWith(expr, lit(other).expr) }
 
   /**
-   * String starts with another string literal.
+   * Return a Boolean Column based on a string match. Note you do not need regex ^.
+   * {{{
+   *   // find names that start with "Al"
+   *   scala> df.filter( $"name".startsWith("Al") ).collect()
+   *   Array([Alice,1])
+   *   scala> df.filter( $"name".startsWith("^Al") ).collect()
+   *   Array()
+   * }}}
    *
    * @group expr_ops
    * @since 1.3.0
@@ -872,7 +889,14 @@ class Column(val expr: Expression) extends Logging {
   def endsWith(other: Column): Column = withExpr { EndsWith(expr, lit(other).expr) }
 
   /**
-   * String ends with another string literal.
+   * Return a Boolean column based on string match. Note you do not need regex $.
+   * {{{
+   *   // find names that end with "ice"
+   *   scala> df.filter( $"name".endsWith("ice") ).collect()
+   *   Array([Alice,1])
+   *   scala> df.filter( $"name".endsWith("ice$") ).collect()
+   *   Array()
+   * }}}
    *
    * @group expr_ops
    * @since 1.3.0
