@@ -211,7 +211,7 @@ cluster.</p>
 
 <dl class="attribute">
 <dt id="pyspark.sql.SparkSession.builder">
-<tt class="descclassname">SparkSession.</tt><tt class="descname">builder</tt><em class="property"> = &lt;pyspark.sql.session.Builder object at 0x2b1a65226d50&gt;</em><a class="headerlink" href="#pyspark.sql.SparkSession.builder" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">SparkSession.</tt><tt class="descname">builder</tt><em class="property"> = &lt;pyspark.sql.session.Builder object at 0x2b0c0902fd90&gt;</em><a class="headerlink" href="#pyspark.sql.SparkSession.builder" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -3333,7 +3333,7 @@ or gets an item by key out of a dict.</p>
 <dl class="method">
 <dt id="pyspark.sql.Column.isNotNull">
 <tt class="descname">isNotNull</tt><big>(</big><big>)</big><a class="headerlink" href="#pyspark.sql.Column.isNotNull" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if the current expression is null. Often combined with 
+<dd><p>True if the current expression is null. Often combined with
 <a class="reference internal" href="#pyspark.sql.DataFrame.filter" title="pyspark.sql.DataFrame.filter"><tt class="xref py py-func docutils literal"><span class="pre">DataFrame.filter()</span></tt></a> to select rows with non-null values.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">df2</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 <span class="go">[Row(name=u&#39;Tom&#39;, height=80), Row(name=u&#39;Alice&#39;, height=None)]</span>
@@ -3346,7 +3346,7 @@ or gets an item by key out of a dict.</p>
 <dl class="method">
 <dt id="pyspark.sql.Column.isNull">
 <tt class="descname">isNull</tt><big>(</big><big>)</big><a class="headerlink" href="#pyspark.sql.Column.isNull" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if the current expression is null. Often combined with 
+<dd><p>True if the current expression is null. Often combined with
 <a class="reference internal" href="#pyspark.sql.DataFrame.filter" title="pyspark.sql.DataFrame.filter"><tt class="xref py py-func docutils literal"><span class="pre">DataFrame.filter()</span></tt></a> to select rows with null values.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">df2</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 <span class="go">[Row(name=u&#39;Tom&#39;, height=80), Row(name=u&#39;Alice&#39;, height=None)]</span>
