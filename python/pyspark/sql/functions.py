@@ -95,11 +95,11 @@ _functions_1_4 = {
             '0.0 through pi.',
     'asin': 'Computes the sine inverse of the given value; the returned angle is in the range' +
             '-pi/2 through pi/2.',
-    'atan': 'Computes the tangent inverse of the given value.',
+    'atan': 'Computes the tangent inverse of the given value. Units in radians.',
     'cbrt': 'Computes the cube-root of the given value.',
     'ceil': 'Computes the ceiling of the given value.',
-    'cos': 'Computes the cosine of the given value.',
-    'cosh': 'Computes the hyperbolic cosine of the given value.',
+    'cos': 'Computes the cosine of the given value. Units in radians.',
+    'cosh': 'Computes the hyperbolic cosine of the given value. Units in radians.',
     'exp': 'Computes the exponential of the given value.',
     'expm1': 'Computes the exponential of the given value minus one.',
     'floor': 'Computes the floor of the given value.',
@@ -109,10 +109,10 @@ _functions_1_4 = {
     'rint': 'Returns the double value that is closest in value to the argument and' +
             ' is equal to a mathematical integer.',
     'signum': 'Computes the signum of the given value.',
-    'sin': 'Computes the sine of the given value.',
-    'sinh': 'Computes the hyperbolic sine of the given value.',
-    'tan': 'Computes the tangent of the given value.',
-    'tanh': 'Computes the hyperbolic tangent of the given value.',
+    'sin': 'Computes the sine of the given value. Units in radians',
+    'sinh': 'Computes the hyperbolic sine of the given value. Units in radians.',
+    'tan': 'Computes the tangent of the given value. Units in radians.',
+    'tanh': 'Computes the hyperbolic tangent of the given value. Units in radians.',
     'toDegrees': '.. note:: Deprecated in 2.1, use degrees instead.',
     'toRadians': '.. note:: Deprecated in 2.1, use radians instead.',
     'bitwiseNOT': 'Computes bitwise not.',
@@ -153,7 +153,7 @@ _functions_2_2 = {
 # math functions that take two arguments as input
 _binary_mathfunctions = {
     'atan2': 'Returns the angle theta from the conversion of rectangular coordinates (x, y) to' +
-             'polar coordinates (r, theta).',
+             'polar coordinates (r, theta). Units in radians.',
     'hypot': 'Computes ``sqrt(a^2 + b^2)`` without intermediate overflow or underflow.',
     'pow': 'Returns the value of the first argument raised to the power of the second argument.',
 }
@@ -397,7 +397,7 @@ def input_file_name():
 
 @since(1.6)
 def isnan(col):
-    """An expression that returns true iff the column is NaN.
+    """An expression that returns true if the column is NaN.
 
     >>> df = spark.createDataFrame([(1.0, float('nan')), (float('nan'), 2.0)], ("a", "b"))
     >>> df.select(isnan("a").alias("r1"), isnan(df.a).alias("r2")).collect()
@@ -409,7 +409,7 @@ def isnan(col):
 
 @since(1.6)
 def isnull(col):
-    """An expression that returns true iff the column is null.
+    """An expression that returns true if the column is null.
 
     >>> df = spark.createDataFrame([(1, None), (None, 2)], ("a", "b"))
     >>> df.select(isnull("a").alias("r1"), isnull(df.a).alias("r2")).collect()
@@ -456,7 +456,7 @@ def monotonically_increasing_id():
 def nanvl(col1, col2):
     """Returns col1 if it is not NaN, or col2 if col1 is NaN.
 
-    Both inputs should be floating point columns (DoubleType or FloatType).
+    Both inputs should be floating point columns (:class:`DoubleType` or FloatType).
 
     >>> df = spark.createDataFrame([(1.0, float('nan')), (float('nan'), 2.0)], ("a", "b"))
     >>> df.select(nanvl("a", "b").alias("r1"), nanvl(df.a, df.b).alias("r2")).collect()
@@ -601,7 +601,7 @@ def struct(*cols):
 def greatest(*cols):
     """
     Returns the greatest value of the list of column names, skipping null values.
-    This function takes at least 2 parameters. It will return null iff all parameters are null.
+    This function takes at least 2 parameters. It will return null if all parameters are null.
 
     >>> df = spark.createDataFrame([(1, 4, 3)], ['a', 'b', 'c'])
     >>> df.select(greatest(df.a, df.b, df.c).alias("greatest")).collect()
@@ -617,7 +617,7 @@ def greatest(*cols):
 def least(*cols):
     """
     Returns the least value of the list of column names, skipping null values.
-    This function takes at least 2 parameters. It will return null iff all parameters are null.
+    This function takes at least 2 parameters. It will return null if all parameters are null.
 
     >>> df = spark.createDataFrame([(1, 4, 3)], ['a', 'b', 'c'])
     >>> df.select(least(df.a, df.b, df.c).alias("least")).collect()
@@ -766,7 +766,7 @@ def ntile(n):
 @since(1.5)
 def current_date():
     """
-    Returns the current date as a date column.
+    Returns the current date as a :class:`DateType` column.
     """
     sc = SparkContext._active_spark_context
     return Column(sc._jvm.functions.current_date())
@@ -774,7 +774,7 @@ def current_date():
 
 def current_timestamp():
     """
-    Returns the current timestamp as a timestamp column.
+    Returns the current timestamp as a :class:`TimestampType`column.
     """
     sc = SparkContext._active_spark_context
     return Column(sc._jvm.functions.current_timestamp())
@@ -793,8 +793,8 @@ def date_format(date, format):
     .. note:: Use when ever possible specialized functions like `year`. These benefit from a
         specialized implementation.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(date_format('a', 'MM/dd/yyy').alias('date')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(date_format('time', 'MM/dd/yyy').alias('date')).collect()
     [Row(date=u'04/08/2015')]
     """
     sc = SparkContext._active_spark_context
@@ -806,8 +806,8 @@ def year(col):
     """
     Extract the year of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(year('a').alias('year')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(year('time').alias('year')).collect()
     [Row(year=2015)]
     """
     sc = SparkContext._active_spark_context
@@ -819,8 +819,8 @@ def quarter(col):
     """
     Extract the quarter of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(quarter('a').alias('quarter')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(quarter('time').alias('quarter')).collect()
     [Row(quarter=2)]
     """
     sc = SparkContext._active_spark_context
@@ -832,8 +832,8 @@ def month(col):
     """
     Extract the month of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(month('a').alias('month')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(month('time').alias('month')).collect()
     [Row(month=4)]
    """
     sc = SparkContext._active_spark_context
@@ -845,8 +845,8 @@ def dayofmonth(col):
     """
     Extract the day of the month of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(dayofmonth('a').alias('day')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(dayofmonth('time').alias('day')).collect()
     [Row(day=8)]
     """
     sc = SparkContext._active_spark_context
@@ -858,8 +858,8 @@ def dayofyear(col):
     """
     Extract the day of the year of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
-    >>> df.select(dayofyear('a').alias('day')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
+    >>> df.select(dayofyear('time').alias('day')).collect()
     [Row(day=98)]
     """
     sc = SparkContext._active_spark_context
@@ -871,8 +871,8 @@ def hour(col):
     """
     Extract the hours of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['a'])
-    >>> df.select(hour('a').alias('hour')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['time'])
+    >>> df.select(hour('time').alias('hour')).collect()
     [Row(hour=13)]
     """
     sc = SparkContext._active_spark_context
@@ -884,8 +884,8 @@ def minute(col):
     """
     Extract the minutes of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['a'])
-    >>> df.select(minute('a').alias('minute')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['time'])
+    >>> df.select(minute('time').alias('minute')).collect()
     [Row(minute=8)]
     """
     sc = SparkContext._active_spark_context
@@ -897,8 +897,8 @@ def second(col):
     """
     Extract the seconds of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['a'])
-    >>> df.select(second('a').alias('second')).collect()
+    >>> df = spark.createDataFrame([('2015-04-08 13:08:15',)], ['time'])
+    >>> df.select(second('time').alias('second')).collect()
     [Row(second=15)]
     """
     sc = SparkContext._active_spark_context
@@ -910,7 +910,7 @@ def weekofyear(col):
     """
     Extract the week number of a given date as integer.
 
-    >>> df = spark.createDataFrame([('2015-04-08',)], ['a'])
+    >>> df = spark.createDataFrame([('2015-04-08',)], ['time'])
     >>> df.select(weekofyear(df.a).alias('week')).collect()
     [Row(week=15)]
     """
@@ -991,12 +991,12 @@ def to_date(col, format=None):
     Specify formats according to
     `SimpleDateFormats <http://docs.oracle.com/javase/tutorial/i18n/format/simpleDateFormat.html>`_.
 
-    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['t'])
-    >>> df.select(to_date(df.t).alias('date')).collect()
+    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['time'])
+    >>> df.select(to_date(df.time).alias('date')).collect()
     [Row(date=datetime.date(1997, 2, 28))]
 
-    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['t'])
-    >>> df.select(to_date(df.t, 'yyyy-MM-dd HH:mm:ss').alias('date')).collect()
+    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['time'])
+    >>> df.select(to_date(df.time, 'yyyy-MM-dd HH:mm:ss').alias('date')).collect()
     [Row(date=datetime.date(1997, 2, 28))]
     """
     sc = SparkContext._active_spark_context
@@ -1056,8 +1056,8 @@ def next_day(date, dayOfWeek):
     Day of the week parameter is case insensitive, and accepts:
         "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun".
 
-    >>> df = spark.createDataFrame([('2015-07-27',)], ['d'])
-    >>> df.select(next_day(df.d, 'Sun').alias('date')).collect()
+    >>> df = spark.createDataFrame([('2015-07-27',)], ['time'])
+    >>> df.select(next_day(df.time, 'Sun').alias('date')).collect()
     [Row(date=datetime.date(2015, 8, 2))]
     """
     sc = SparkContext._active_spark_context
@@ -1096,6 +1096,10 @@ def unix_timestamp(timestamp=None, format='yyyy-MM-dd HH:mm:ss'):
     locale, return null if fail.
 
     if `timestamp` is None, then it returns current timestamp.
+
+    >>> time_df = spark.createDataFrame([Row(date='2015-04-08')])
+    >>> time_df.select(F.unix_timestamp('date', 'yyyy-MM-dd').alias('unix_time')).collect()
+    [Row(unix_time=1428476400)]
     """
     sc = SparkContext._active_spark_context
     if timestamp is None:
@@ -1109,8 +1113,8 @@ def from_utc_timestamp(timestamp, tz):
     Given a timestamp, which corresponds to a certain time of day in UTC, returns another timestamp
     that corresponds to the same time of day in the given timezone.
 
-    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['t'])
-    >>> df.select(from_utc_timestamp(df.t, "PST").alias('t')).collect()
+    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['time'])
+    >>> df.select(from_utc_timestamp(df.time, "PST").alias('t')).collect()
     [Row(t=datetime.datetime(1997, 2, 28, 2, 30))]
     """
     sc = SparkContext._active_spark_context
@@ -1123,8 +1127,8 @@ def to_utc_timestamp(timestamp, tz):
     Given a timestamp, which corresponds to a certain time of day in the given timezone, returns
     another timestamp that corresponds to the same time of day in UTC.
 
-    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['t'])
-    >>> df.select(to_utc_timestamp(df.t, "PST").alias('t')).collect()
+    >>> df = spark.createDataFrame([('1997-02-28 10:30:00',)], ['time'])
+    >>> df.select(to_utc_timestamp(df.time, "PST").alias('t')).collect()
     [Row(t=datetime.datetime(1997, 2, 28, 18, 30))]
     """
     sc = SparkContext._active_spark_context
@@ -1989,7 +1993,7 @@ def _test():
     sc = spark.sparkContext
     globs['sc'] = sc
     globs['spark'] = spark
-    globs['df'] = sc.parallelize([Row(name='Alice', age=2), Row(name='Bob', age=5)]).toDF()
+    globs['df'] = spark.createDataFrame([Row(name='Alice', age=2), Row(name='Bob', age=5)])
     (failure_count, test_count) = doctest.testmod(
         pyspark.sql.functions, globs=globs,
         optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
